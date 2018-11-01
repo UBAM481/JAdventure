@@ -1,7 +1,7 @@
 BIL 481 PROJECT
 UBAM 481
-Contributors:
-<h>Utku Aysev</h> 
+Contributors:<br />
+Utku Aysev 
 =============================================
 
 
