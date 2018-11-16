@@ -58,7 +58,13 @@ public class Player extends Entity {
     private String type;
     private static HashMap<String, Integer>characterLevels = new HashMap<String, Integer>();
 
+    private Pet pet;
+    
     public Player() {
+    	pet = new Pet();
+    }
+    public Pet getPet() {
+    	return pet;
     }
 
     protected static void setUpCharacterLevels() {
@@ -86,6 +92,7 @@ public class Player extends Entity {
 
     public void setCharacterLevel(String characterType, int level) {
         this.characterLevels.put(characterType, level);
+        pet.setLevel(level);
     }
 
     public int getCharacterLevel(String characterType) {
@@ -122,6 +129,11 @@ public class Player extends Entity {
             player.setLuck(json.get("luck").getAsInt());
             player.setStealth(json.get("stealth").getAsInt());
             player.setCurrentCharacterType(json.get("type").getAsString());
+            
+            player.getPet().setLevel(player.getLevel());
+            player.getPet().setHealth(player.getPet().calculateHealth());
+            player.getPet().setDamage(player.getPet().calculateDamage());
+            
             HashMap<String, Integer> charLevels = new Gson().fromJson(json.get("types"), new TypeToken<HashMap<String, Integer>>(){}.getType());
             player.setCharacterLevels(charLevels);
             if (json.has("equipment")) {
@@ -195,10 +207,16 @@ public class Player extends Entity {
             player.setArmour(json.get("armour").getAsInt());
             player.setDamage(json.get("damage").getAsInt());
             player.setLevel(json.get("level").getAsInt());
+            
             player.setXP(json.get("xp").getAsInt());
             player.setStrength(json.get("strength").getAsInt());
             player.setIntelligence(json.get("intelligence").getAsInt());
             player.setDexterity(json.get("dexterity").getAsInt());
+            
+            player.getPet().setLevel(player.getLevel());
+            player.getPet().setHealth(player.getPet().calculateHealth());
+            player.getPet().setDamage(player.getPet().calculateDamage());
+            
             setUpVariables(player);
             JsonArray items = json.get("items").getAsJsonArray();
             for (JsonElement item : items) {
