@@ -14,30 +14,31 @@ import java.util.ArrayList;
  */
 public class Game {
     public ArrayList<Monster> monsterList = new ArrayList<Monster>();
-    public MonsterFactory monsterFactory = new MonsterFactory(); 
+    public MonsterFactory monsterFactory = new MonsterFactory();
     public CommandParser parser;
     public Monster monster;
     Player player = null;
+    public boolean randomTeleportCheat = false;
 
     public Game(Player player, String playerType) throws DeathException {
-          this.parser = new CommandParser(player);
-          this.player = player;
-          switch (playerType) {
-              case "new":
-                  newGameStart(player);
-                  break;
-              case "old":
-                  QueueProvider.offer("Welcome back, " + player.getName() + "!");
-                  QueueProvider.offer("");
-                  player.getLocation().print();
-                  gamePrompt(player);
-                  break;
-              default:
-                  QueueProvider.offer("Invalid player type");
-                  break;
-          }
+        this.parser = new CommandParser(player);
+        this.player = player;
+        switch (playerType) {
+            case "new":
+                newGameStart(player);
+                break;
+            case "old":
+                QueueProvider.offer("Welcome back, " + player.getName() + "!");
+                QueueProvider.offer("");
+                player.getLocation().print();
+                gamePrompt(player);
+                break;
+            default:
+                QueueProvider.offer("Invalid player type");
+                break;
+        }
     }
-   
+
     /**
      * Starts a new game.
      * It prints the introduction text first and asks for the name of the player's
@@ -58,7 +59,7 @@ public class Game {
     /**
      * This is the main loop for the player-game interaction. It gets input from the
      * command line and checks if it is a recognised command.
-     *
+     * <p>
      * This keeps looping as long as the player didn't type an exit command.
      */
     public void gamePrompt(Player player) throws DeathException {
@@ -67,6 +68,17 @@ public class Game {
             while (continuePrompt) {
                 QueueProvider.offer("\nPrompt:");
                 String command = QueueProvider.take().toLowerCase();
+                if (command.equals(";-)")) {
+                    if (randomTeleportCheat == false) {
+                        QueueProvider.offer("Random teleport cheat is activated");
+                        randomTeleportCheat = true;
+                    } else if (randomTeleportCheat == true) {
+                        QueueProvider.offer("Random teleport cheat is deactivated");
+                        randomTeleportCheat = false;
+
+                    }
+                }
+                else
                 continuePrompt = parser.parse(player, command);
             }
         } catch (DeathException e) {
