@@ -93,7 +93,9 @@ public enum CommandCollection {
                 if ("test".equals(player.getName())) {
                     QueueProvider.offer(message);
                 }
+                //if()
             } else {
+                if(!message.contains("randomteleport"))
                 QueueProvider.offer(message);
                 
             }
@@ -312,6 +314,12 @@ public enum CommandCollection {
             QueueProvider.offer("Unable to talk to " + arg);
         }
     }
+
+    @Command(command="?-*randomteleport?-*", aliases="?-*rt?-*",description ="Teleport a random location according to some parameters",debug = false)
+        public void comment_randomteleport(String arg) throws DeathException{
+        QueueProvider.offer("You are teleporting " + arg);
+        }
+
 
     private void addItemToLocation() {
         ItemRepository itemRepo = GameBeans.getItemRepository();

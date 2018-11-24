@@ -187,5 +187,8 @@ public class Storage {
             return content;
         }
     }
+    public int getNumberOfItems(){
+        return itemStacks.size();
+    }
 
 }

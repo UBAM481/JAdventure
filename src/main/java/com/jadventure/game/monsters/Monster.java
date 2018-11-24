@@ -17,6 +17,7 @@ import java.util.Random;
 public abstract class Monster extends NPC {
     public String monsterType;
     private ItemRepository itemRepo = GameBeans.getItemRepository();
+    private int randomTeleportPreventPoint;
 
     @Override
     public boolean equals(Object obj) {
@@ -50,5 +51,13 @@ public abstract class Monster extends NPC {
                 }
             }
         }
+    }
+
+    public int getRandomTeleportPreventPoint() {
+        return randomTeleportPreventPoint;
+    }
+
+    public void setRandomTeleportPreventPoint(int randomTeleportPreventPoint) {
+        this.randomTeleportPreventPoint = randomTeleportPreventPoint;
     }
 }

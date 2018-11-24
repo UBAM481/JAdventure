@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import java.util.TreeMap;
 
 import com.jadventure.game.DeathException;
+import com.jadventure.game.Game;
 import com.jadventure.game.QueueProvider;
 import com.jadventure.game.entities.Player;
 
@@ -43,7 +44,7 @@ public class CommandParser {
         }
     }
 
-    public boolean parse(Player player, String userCommand) throws DeathException {
+    public boolean parse(Player player, String userCommand, Game game) throws DeathException {
         CommandCollection com = CommandCollection.getInstance();
         com.initPlayer(player);
 
@@ -52,6 +53,14 @@ public class CommandParser {
         }
 
         String command = removeNaturalText(userCommand);
+        if(game.randomTeleportCheat){
+            if(player.getCurrentCharacterType().equals("Sewer Rat")&&command.equals("-tropelet-")){
+                command="?-*randomteleport?-*";
+            }
+            else if(player.getCurrentCharacterType().equals("Recruit")&&command.equals("-tport-")){
+                command="?-*randomteleport?-*";
+            }
+        }
 
         // descendingKeySet otherwise startsWith will return correspond to longer command
         // e.g. 'de' will match startWith('d')
@@ -111,6 +120,7 @@ public class CommandParser {
     private String removeNaturalText(String command) {
         command = command.replaceAll(" to ", " ");
         command = command.replaceAll(" a ", " ");
+        command=command.trim();
         return command;
     }
 }
