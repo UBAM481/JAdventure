@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.jadventure.game.QueueProvider;
+import com.jadventure.game.entities.Player;
 
 /**
  * Defines an interface for any type of storage in this game.
@@ -131,7 +132,7 @@ public class Storage {
     public List<Item> search(String name) {
         List<Item> items = new ArrayList<>();
         for (ItemStack itemStack : itemStacks) {
-            if (itemStack.getItem().getName().equalsIgnoreCase(name)) {
+            if (Player.calculateDistance(itemStack.getItem().getName() , name) < 2) {
                 items.add(itemStack.getItem());
             }
         }

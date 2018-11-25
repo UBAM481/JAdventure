@@ -379,8 +379,14 @@ public class Player extends Entity {
         List<Item> items = new ArrayList<>();
         for (Item item : itemList) {
             String testItemName = item.getName();
-            if (calculateDistance( itemName , item.getName()) < 3) {
-                items.add(item);
+            if (calculateDistance( itemName , item.getName()) < 2) {
+                char answer = 'y' ;
+                if( calculateDistance( itemName , item.getName()) == 1 ){
+                    QueueProvider.offer("Did you mean " + item.getName() + "? (y/n)" ) ;
+                    answer = QueueProvider.take().toLowerCase().charAt(0) ;
+                }
+                if( answer == 'y' )
+                    items.add(item);
             }
         }
         return items;
@@ -393,7 +399,7 @@ public class Player extends Entity {
     public List<Item> searchEquipment(String itemName, Map<EquipmentLocation, Item> equipment) {
         List<Item> items = new ArrayList<>();
         for (Item item : equipment.values()) {
-            if (item != null && item.getName().equals(itemName)) {
+            if (item != null && calculateDistance(item.getName(), itemName) < 2) {
                 items.add(item);
             }
         }
