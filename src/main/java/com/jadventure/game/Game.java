@@ -52,6 +52,10 @@ public class Game {
         this.player.setLocation(locationRepo.getInitialLocation());
         player.save();
         QueueProvider.offer("Welcome to Silliya, " + player.getName() + ".");
+        
+        QueueProvider.offer("By the way, if this mighty creature is your pet, hold it tight!");
+        QueueProvider.offer("I'm not planning to die today or soon. Now come on!");
+        
         player.getLocation().print();
         gamePrompt(player);
     }

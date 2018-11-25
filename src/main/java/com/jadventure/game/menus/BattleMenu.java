@@ -56,6 +56,8 @@ public class BattleMenu extends Menus {
             int oldLevel = this.player.getLevel();
             int newLevel = (int) (0.075 * Math.sqrt(this.player.getXP()) + 1);
             this.player.setLevel(newLevel);
+            this.player.getPet().setLevel(newLevel);
+            
 
             // Iterates over the opponent's items and if there are any, drops them.
             // There are two loops due to a ConcurrentModification Exception that occurs
@@ -81,6 +83,8 @@ public class BattleMenu extends Menus {
                     opponent.getGold() + " gold");
             if (oldLevel < newLevel) {
                 QueueProvider.offer("You've are now level " + newLevel + "!");
+                
+                QueueProvider.offer("Pet leveled up to " + newLevel);
             }
             CharacterChange cc = new CharacterChange();
             cc.trigger(this.player, "kill", opponent.getName());
@@ -192,6 +196,15 @@ public class BattleMenu extends Menus {
         }
         QueueProvider.offer(healthReduction + " damage dealt!");
         if (attacker instanceof Player) {
+        	 
+        	int petDamage = ((Player) attacker).getPet().calculateDamage();
+            defender.setHealth(defender.getHealth() - petDamage);
+            QueueProvider.offer(petDamage + " pet damage dealt!");
+                 
+            if (defender.getHealth() < 0) {
+                defender.setHealth(0);
+            }
+             
             QueueProvider.offer("The " + defender.getName() + "'s health is " +
                     defender.getHealth());
         } else {

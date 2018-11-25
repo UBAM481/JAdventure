@@ -277,6 +277,10 @@ public class Player extends Entity {
               message += "\nStealth: " + getStealth();
               message += "\nXP: " + getXP();
               message += "\n" + getName() + "'s level: " + getLevel();
+             
+              message += "\nPet level: " + player.getPet().getLevel();
+              message += "\nPet Health: " + player.getPet().getHealth();
+              message += "\nPet Damage: " + player.getPet().getDamage();
         QueueProvider.offer(message);
     }
 
