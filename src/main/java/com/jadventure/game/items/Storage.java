@@ -133,7 +133,13 @@ public class Storage {
         List<Item> items = new ArrayList<>();
         for (ItemStack itemStack : itemStacks) {
             if (Player.calculateDistance(itemStack.getItem().getName() , name) < 2) {
-                items.add(itemStack.getItem());
+                char answer = 'y' ;
+                if( Player.calculateDistance( itemStack.getItem().getName() , name) == 1 ){
+                    QueueProvider.offer("Did you mean " + itemStack.getItem().getName() + "? (y/n)" ) ;
+                    answer = QueueProvider.take().toLowerCase().charAt(0) ;
+                }
+                if( answer == 'y' )
+                    items.add(itemStack.getItem());
             }
         }
         return items;

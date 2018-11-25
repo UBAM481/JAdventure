@@ -400,7 +400,13 @@ public class Player extends Entity {
         List<Item> items = new ArrayList<>();
         for (Item item : equipment.values()) {
             if (item != null && calculateDistance(item.getName(), itemName) < 2) {
-                items.add(item);
+                char answer = 'y' ;
+                if( calculateDistance( itemName , item.getName()) == 1 ){
+                    QueueProvider.offer("Did you mean " + item.getName() + "? (y/n)" ) ;
+                    answer = QueueProvider.take().toLowerCase().charAt(0) ;
+                }
+                if( answer == 'y' )
+                    items.add(item);
             }
         }
         return items;
