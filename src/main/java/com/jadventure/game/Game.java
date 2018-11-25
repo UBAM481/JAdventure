@@ -47,6 +47,13 @@ public class Game {
     public void newGameStart(Player player) throws DeathException {
         QueueProvider.offer(player.getIntro());
         String userInput = QueueProvider.take();
+      
+        while(userInput.length() == 0)
+        {
+        	QueueProvider.offer("No valid name entered");
+        	userInput = QueueProvider.take();
+        }
+        
         player.setName(userInput);
         LocationRepository locationRepo = GameBeans.getLocationRepository(player.getName());
         this.player.setLocation(locationRepo.getInitialLocation());
