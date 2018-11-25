@@ -304,7 +304,7 @@ public enum CommandCollection {
         List<NPC> npcs = player.getLocation().getNpcs();
         NPC npc = null;
         for (NPC i : npcs) {
-            if (i.getName().equalsIgnoreCase(arg)) {
+            if (Player.calculateDistance(i.getName() , arg) < 3) {
                 npc = i;
             }
         }

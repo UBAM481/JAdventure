@@ -79,7 +79,7 @@ public class Game {
                     }
                 }
                 else
-                	continuePrompt = parser.parse(player, command,this);
+                continuePrompt = parser.parse(player, command,this);
             }
         } catch (DeathException e) {
             if (e.getLocalisedMessage().equals("replay")) {
