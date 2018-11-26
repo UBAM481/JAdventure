@@ -200,7 +200,13 @@ public class BattleMenu extends Menus {
         	int petDamage = ((Player) attacker).getPet().calculateDamage();
             defender.setHealth(defender.getHealth() - petDamage);
             QueueProvider.offer(petDamage + " pet damage dealt!");
-                 
+            if(((Player) attacker).getAuraOfValor()) {
+                defender.setHealth(defender.getHealth() - 5);
+                QueueProvider.offer("You have the Aura of Valor, an extra 5 damage is dealt.");
+                ((Player) attacker).setManaPool(((Player) attacker).getManaPool()-10);
+                if(((Player) attacker).getManaPool()==0)
+                    ((Player) attacker).setAuraOfValor(false);
+            }
             if (defender.getHealth() < 0) {
                 defender.setHealth(0);
             }

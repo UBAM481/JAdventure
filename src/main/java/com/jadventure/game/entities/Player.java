@@ -54,6 +54,8 @@ public class Player extends Entity {
     protected static LocationRepository locationRepo = GameBeans.getLocationRepository();
     private ILocation location;
     private int xp;
+    private int manaPool;
+    private boolean auraOfValor;
     /** Player type */
     private String type;
     private static HashMap<String, Integer>characterLevels = new HashMap<String, Integer>();
@@ -99,6 +101,10 @@ public class Player extends Entity {
         int characterLevel = this.characterLevels.get(characterType);
         return characterLevel;
     }
+    public int getManaPool(){ return manaPool;}
+    public void setManaPool(int mana){ manaPool=mana;}
+    public boolean getAuraOfValor() { return auraOfValor;}
+    public void setAuraOfValor(boolean auraOfValor){ this.auraOfValor=auraOfValor;}
 
     protected static String getProfileFileName(String name) {
         return "json/profiles/" + name + "/" + name + "_profile.json";
@@ -133,6 +139,9 @@ public class Player extends Entity {
             player.getPet().setLevel(player.getLevel());
             player.getPet().setHealth(player.getPet().calculateHealth());
             player.getPet().setDamage(player.getPet().calculateDamage());
+
+            player.setManaPool(50);
+            player.setAuraOfValor(true);
             
             HashMap<String, Integer> charLevels = new Gson().fromJson(json.get("types"), new TypeToken<HashMap<String, Integer>>(){}.getType());
             player.setCharacterLevels(charLevels);
@@ -216,6 +225,9 @@ public class Player extends Entity {
             player.getPet().setLevel(player.getLevel());
             player.getPet().setHealth(player.getPet().calculateHealth());
             player.getPet().setDamage(player.getPet().calculateDamage());
+
+            player.setManaPool(50);
+            player.setAuraOfValor(true);
             
             setUpVariables(player);
             JsonArray items = json.get("items").getAsJsonArray();
@@ -281,6 +293,12 @@ public class Player extends Entity {
               message += "\nPet level: " + player.getPet().getLevel();
               message += "\nPet Health: " + player.getPet().getHealth();
               message += "\nPet Damage: " + player.getPet().getDamage();
+
+              message += "\nCurrent mana: " + player.getManaPool();
+              if(auraOfValor)
+                  message += "\nYou have Aura of Valor(+5 raw damage)";
+              if(!auraOfValor)
+                  message += "\nYou do not have Aura of Valor.";
         QueueProvider.offer(message);
     }
 
