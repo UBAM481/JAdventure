@@ -201,8 +201,18 @@ public class BattleMenu extends Menus {
             defender.setHealth(defender.getHealth() - petDamage);
             QueueProvider.offer(petDamage + " pet damage dealt!");
             if(((Player) attacker).getAuraOfValor()) {
-                defender.setHealth(defender.getHealth() - 5);
-                QueueProvider.offer("You have the Aura of Valor, an extra 5 damage is dealt.");
+                int x=(int)(java.lang.Math.random()*6+1);
+                if(x==1)
+                    QueueProvider.offer("You have the Aura of Valor, but the monster is too courageous. No damage dealt.");
+                if(x==2){
+                    defender.setHealth(defender.getHealth() - 10);
+                    QueueProvider.offer("Critical hit! You have the Aura of Valor, an extra 10 damage is dealt.");
+                }
+                else {
+                    defender.setHealth(defender.getHealth() - 10);
+                    QueueProvider.offer("You have the Aura of Valor, an extra 5 damage is dealt.");
+                }
+
                 ((Player) attacker).setManaPool(((Player) attacker).getManaPool()-10);
                 if(((Player) attacker).getManaPool()==0)
                     ((Player) attacker).setAuraOfValor(false);
