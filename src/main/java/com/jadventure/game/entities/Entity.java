@@ -227,6 +227,7 @@ public abstract class Entity {
                 break;
             }
             case 'p': {
+
                 if (item.containsProperty("healthMax")) {
                     int healthOld = this.getHealth();
                     this.healthMax += item.getProperty("healthMax");
@@ -240,6 +241,16 @@ public abstract class Entity {
                     } else {
                         result.put("health", String.valueOf(item.getProperty("healthMax")));
                     }
+                }
+                if(item.containsProperty("manaPool") && this instanceof Player) {
+                    ((Player) this).setManaPool(((Player) this).getManaPool() + 30);
+                    unequipItem(item);
+                    removeItemFromStorage(item);
+                    if(((Player) this).getManaPool()>50) {
+                        QueueProvider.offer("Max mana limit exceeded. Setting mana to 50.");
+                        ((Player) this).setManaPool(50);
+                    }
+                    ((Player) this).setAuraOfValor(true);
                 }
                 break;
             }

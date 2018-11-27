@@ -32,6 +32,18 @@
         "value": "10"
       }
     },
+    "pmana": {
+      "type": "potion",
+      "name": "manapotion",
+      "description": "large mana potion that refills your mana by 30.",
+      "position": "mouth",
+      "level": 1,
+      "properties": {
+        "manaPool": "+30",
+        "weight": "1",
+        "value": "5"
+      }
+    },
     "pmil1": {
       "type": "potion",
       "name": "milk",
