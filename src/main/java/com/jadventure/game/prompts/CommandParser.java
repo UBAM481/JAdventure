@@ -54,10 +54,10 @@ public class CommandParser {
 
         String command = removeNaturalText(userCommand);
         if(game.randomTeleportCheat){
-            if(player.getCurrentCharacterType().equals("Sewer Rat")&&command.equals("-tropelet-")){
+            if(player.getCurrentCharacterType().equals("Sewer Rat")&&command.equalsIgnoreCase("-tropelet-")){
                 command="?-*randomteleport?-*";
             }
-            else if(player.getCurrentCharacterType().equals("Recruit")&&command.equals("-tport-")){
+            else if(player.getCurrentCharacterType().equals("Recruit")&&command.equalsIgnoreCase("-tport-")){
                 command="?-*randomteleport?-*";
             }
         }

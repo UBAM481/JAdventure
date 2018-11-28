@@ -1,6 +1,7 @@
 package com.jadventure.game.menus;
 
 import com.jadventure.game.QueueProvider;
+import com.jadventure.game.entities.Player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,6 +19,7 @@ public class Menus {
     public MenuItem displayMenu(List<MenuItem> m) {
         int i = 1;
         for (MenuItem menuItem: m) {
+            if(!menuItem.command.equals("Random Teleport"))
             commandMap.put(String.valueOf(i), menuItem);
             commandMap.put(menuItem.getKey(), menuItem);
             for (String command: menuItem.getAltCommands()) {
@@ -33,6 +35,16 @@ public class Menus {
     protected MenuItem selectMenu(List<MenuItem> m) {
         this.printMenuItems(m);
         String command = QueueProvider.take();
+        if (this instanceof BattleMenu){
+            BattleMenu battleMenu=(BattleMenu) (this);
+            Player player = battleMenu.getPlayer();
+            if(player.getGame().randomTeleportCheat){
+                if(player.getCurrentCharacterType().equals("Sewer Rat")&&command.equalsIgnoreCase("-tropelet-"))
+                    command="Random Teleport";
+                else if(player.getCurrentCharacterType().equals("Recruit")&&command.equalsIgnoreCase("-tport-"))
+                    command="Random Teleport";
+            }
+        }
         if (commandMap.containsKey(command.toLowerCase())) {
             return commandMap.get(command.toLowerCase());
         } else {

@@ -23,6 +23,7 @@ public class Game {
     public Game(Player player, String playerType) throws DeathException {
         this.parser = new CommandParser(player);
         this.player = player;
+        player.setGame(this);
         switch (playerType) {
             case "new":
                 newGameStart(player);

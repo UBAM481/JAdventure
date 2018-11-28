@@ -29,6 +29,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.reflect.TypeToken;
 import com.jadventure.game.DeathException;
+import com.jadventure.game.Game;
 import com.jadventure.game.GameBeans;
 import com.jadventure.game.QueueProvider;
 import com.jadventure.game.items.Item;
@@ -59,6 +60,7 @@ public class Player extends Entity {
     /** Player type */
     private String type;
     private static HashMap<String, Integer>characterLevels = new HashMap<String, Integer>();
+    private Game game;
 
     private Pet pet;
     
@@ -587,5 +589,13 @@ public class Player extends Entity {
         List<Item> searchEquipment = searchEquipment(item.getName(), getEquipment());
         List<Item> searchStorage = searchItem(item.getName(), getStorage());
         return !(searchEquipment.size() == 0 && searchStorage.size() == 0);
+    }
+
+    public Game getGame() {
+        return game;
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
     }
 }

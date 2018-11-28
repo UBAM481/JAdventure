@@ -102,6 +102,9 @@ public class BattleMenu extends Menus {
         this.menuItems.add(new MenuItem("Unequip", "Unequip an item"));
         this.menuItems.add(new MenuItem("View",
                     "View details about your character"));
+        if(player.getGame().randomTeleportCheat)
+            this.menuItems.add(new MenuItem("Random Teleport","Teleport a random location with special cheat code"));
+
     }
 
     private void testSelected(MenuItem m) {
@@ -138,6 +141,10 @@ public class BattleMenu extends Menus {
             case "view": {
                   viewStats();
                   break;
+            }
+            case "random teleport":{
+                QueueProvider.offer("You are teleporting");
+                break;
             }
             default: {
                   break;
@@ -282,5 +289,9 @@ public class BattleMenu extends Menus {
                 viewStats();
                 break;
         }
+    }
+
+    public Player getPlayer() {
+        return player;
     }
 }
