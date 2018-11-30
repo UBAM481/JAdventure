@@ -81,6 +81,10 @@ public class BattleMenu extends Menus {
             QueueProvider.offer("You killed a " + opponent.getName() +
                     "\nYou have gained " + xp + " XP and " +
                     opponent.getGold() + " gold");
+            this.player.setManaPool(this.player.getManaPool()+5);
+            QueueProvider.offer("You have recovered 5 mana out of the monsters tears!");
+            if(this.player.getManaPool()>50)
+                this.player.setManaPool(50);
             if (oldLevel < newLevel) {
                 QueueProvider.offer("You've are now level " + newLevel + "!");
                 
