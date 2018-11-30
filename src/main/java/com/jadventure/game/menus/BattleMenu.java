@@ -211,12 +211,12 @@ public class BattleMenu extends Menus {
                 int x=(int)(java.lang.Math.random()*6+1);
                 if(x==1)
                     QueueProvider.offer("You have the Aura of Valor, but the monster is too courageous. No damage dealt.");
-                if(x==2){
+                else if(x==2){
                     defender.setHealth(defender.getHealth() - 10);
                     QueueProvider.offer("Critical hit! You have the Aura of Valor, an extra 10 damage is dealt.");
                 }
                 else {
-                    defender.setHealth(defender.getHealth() - 10);
+                    defender.setHealth(defender.getHealth() - 5);
                     QueueProvider.offer("You have the Aura of Valor, an extra 5 damage is dealt.");
                 }
 
