@@ -209,7 +209,7 @@ public enum CommandCollection {
                 break;
             default:
                 QueueProvider.offer("That is not a valid display");
-                break;
+                    break;
         }
     }
 
@@ -234,7 +234,11 @@ public enum CommandCollection {
     }
 
     // Debug methods here
-
+    @Command(command="mana", aliases="", description="Adjusts the mana level the player has. Can exceed the limit 50.)", debug=true)
+    public void command_mana(String arg) {
+        int mana = Integer.parseInt(arg);
+        player.setManaPool(mana); //
+    }
     @Command(command="attack", aliases="", description="Adjusts the damage level the player has", debug=true)
     public void command_attack(String arg) {
         double damage = Double.parseDouble(arg);
