@@ -257,7 +257,7 @@ public enum CommandCollection {
         if (health > 0) {
             player.setHealth(health);
         } else {
-            QueueProvider.offer("Health must be possitive");
+            QueueProvider.offer("Health must be positive");
         }
     }
 
