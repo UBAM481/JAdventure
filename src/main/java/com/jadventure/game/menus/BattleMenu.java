@@ -208,7 +208,7 @@ public class BattleMenu extends Menus {
         QueueProvider.offer(healthReduction + " damage dealt!");
         if (attacker instanceof Player) {
         	 
-        	int petDamage = ((Player) attacker).getPet().calculateDamage();
+        	int petDamage = (int)((Player) attacker).getPet().getDamage();
             defender.setHealth(defender.getHealth() - petDamage);
             QueueProvider.offer(petDamage + " pet damage dealt!");
             if(((Player) attacker).getAuraOfValor()) {

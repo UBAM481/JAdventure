@@ -3,8 +3,15 @@ package com.jadventure.game.entities;
 public class Pet extends Entity 
 {		
 	public Pet() {
-		super.setHealth(0);
-		super.setDamage(0);
+		super.setLevel(1);
+	}
+	//to override getDamage method from entity
+	public double getDamage() {
+        return calculateDamage();
+    }
+	//to override getHealth method from entity
+	public int getHealth() {
+		return calculateHealth();
 	}
 	public int calculateHealth()
 	{
