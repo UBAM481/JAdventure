@@ -208,8 +208,6 @@ public class BattleMenu extends Menus {
         	int absorbByPet = ((Player) defender).getPet().absorbPoint();
         	healthReduction = healthReduction - absorbByPet;
         	defender.setHealth(defender.getHealth() - healthReduction);
-        	int currentPetHealth = ((Player) defender).getPet().getHealth();
-        	((Player) defender).getPet().setHealth(currentPetHealth-absorbByPet);
         	QueueProvider.offer(absorbByPet + " damage absorbed by pet!");
         }
         else
