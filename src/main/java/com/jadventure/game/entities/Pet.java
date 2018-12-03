@@ -21,4 +21,8 @@ public class Pet extends Entity
 	{
 		return super.getLevel()*3;
 	}
+	public int absorbPoint()
+	{
+		return super.getLevel()*3;
+	}
 }

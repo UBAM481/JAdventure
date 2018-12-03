@@ -38,4 +38,19 @@ public class PetTest {
     	double actual_health= pet.getHealth();
     	assertEquals("Failure - pet health not properly calculated", expected_health, actual_health, 0);
     }
+    @Test
+    public void newPetAbsorbPoint() {
+    	Pet pet = new Pet();
+    	int expected_absorbPoint = 3;
+    	int actual_absorbPoint = pet.absorbPoint();
+    	assertEquals("Failure - new pet not properly created", expected_absorbPoint, actual_absorbPoint);
+    }
+    @Test
+    public void leveledPetAbsorbPoint() {
+    	Pet pet = new Pet();
+    	pet.setLevel(3);
+    	int expected_absorbPoint = 9;
+    	int actual_absorbPoint = pet.absorbPoint();
+    	assertEquals("Failure - pet absorb point not properly calculated", expected_absorbPoint, actual_absorbPoint);
+    }
 }
