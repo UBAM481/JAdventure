@@ -472,7 +472,8 @@ public class Player extends Entity {
             Item item = items.get(0);
             if (getLevel() >= item.getLevel()) {
                 Map<String, String> change = equipItem(item.getPosition(), item);
-                QueueProvider.offer(item.getName()+ " equipped");
+                if(item.getId().charAt(0) != 'x')
+                	QueueProvider.offer(item.getName()+ " equipped");
                 printStatChange(change);
             } else {
                 QueueProvider.offer("You do not have the required level to use this item");

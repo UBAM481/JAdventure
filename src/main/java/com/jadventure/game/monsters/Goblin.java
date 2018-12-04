@@ -17,6 +17,6 @@ public class Goblin extends Monster {
         this.setCritChance(0.02);
         this.setXPGain(10 + playerLevel * 3);
         this.setGold(playerLevel * 5);
-        addRandomItems(playerLevel, "wdag1", "agre1", "albt1", "algt1", "pmana");
+        addRandomItems(playerLevel, "wdag1", "agre1", "albt1", "algt1", "pmana", "xpetstone");
     }
 }

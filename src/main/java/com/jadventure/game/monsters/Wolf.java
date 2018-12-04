@@ -17,6 +17,6 @@ public class Wolf extends Monster {
                 this.setDexterity(2);
                 this.setXPGain(25 + playerLevel * 3);
 		this.setGold(playerLevel * 2);
-                addRandomItems(playerLevel, "fram1");
+                addRandomItems(playerLevel, "fram1", "xpetstone");
 	}
 }

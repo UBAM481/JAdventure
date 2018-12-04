@@ -190,27 +190,29 @@ public abstract class Entity {
     public Map<String, String> equipItem(EquipmentLocation place, Item item) {
         double oldDamage = this.damage;
         int oldArmour = this.armour;
-        if (place == null) {
-            place = item.getPosition();
+        if(!item.getId().equals("xpetstone")) {
+	        if (place == null) {
+	            place = item.getPosition();
+	        }
+	        if (equipment.get(place) != null) {
+	            unequipItem(equipment.get(place));
+	        }
+	        if (place == EquipmentLocation.BOTH_HANDS) {
+	            unequipTwoPlaces(EquipmentLocation.LEFT_HAND, EquipmentLocation.RIGHT_HAND);
+	        } else if (place == EquipmentLocation.BOTH_ARMS) {
+	            unequipTwoPlaces(EquipmentLocation.LEFT_ARM, EquipmentLocation.RIGHT_ARM);
+	        } 
+	        Item bothHands = equipment.get(EquipmentLocation.BOTH_HANDS);
+	        if (bothHands != null && (EquipmentLocation.LEFT_HAND == place || EquipmentLocation.RIGHT_HAND == place)) { 
+	            unequipItem(bothHands);
+	        }
+	        Item bothArms = equipment.get(EquipmentLocation.BOTH_ARMS);
+	        if (bothArms != null && (place == EquipmentLocation.LEFT_ARM || place == EquipmentLocation.RIGHT_ARM)) { 
+	            unequipItem(bothArms);
+	        }
+	        equipment.put(place, item);
+	        removeItemFromStorage(item);
         }
-        if (equipment.get(place) != null) {
-            unequipItem(equipment.get(place));
-        }
-        if (place == EquipmentLocation.BOTH_HANDS) {
-            unequipTwoPlaces(EquipmentLocation.LEFT_HAND, EquipmentLocation.RIGHT_HAND);
-        } else if (place == EquipmentLocation.BOTH_ARMS) {
-            unequipTwoPlaces(EquipmentLocation.LEFT_ARM, EquipmentLocation.RIGHT_ARM);
-        } 
-        Item bothHands = equipment.get(EquipmentLocation.BOTH_HANDS);
-        if (bothHands != null && (EquipmentLocation.LEFT_HAND == place || EquipmentLocation.RIGHT_HAND == place)) { 
-            unequipItem(bothHands);
-        }
-        Item bothArms = equipment.get(EquipmentLocation.BOTH_ARMS);
-        if (bothArms != null && (place == EquipmentLocation.LEFT_ARM || place == EquipmentLocation.RIGHT_ARM)) { 
-            unequipItem(bothArms);
-        }
-        equipment.put(place, item);
-        removeItemFromStorage(item);
         Map<String, String> result = new HashMap<String, String>();
         switch (item.getId().charAt(0)) {
             case 'w': {
@@ -263,6 +265,11 @@ public abstract class Entity {
                 removeItemFromStorage(item);
                 result.put("health", String.valueOf(health - healthOld));
                 break;
+            }
+            
+            //x for unequippable items
+            case 'x': {
+            	QueueProvider.offer("this item is not equipable");
             }
         }
         return result;

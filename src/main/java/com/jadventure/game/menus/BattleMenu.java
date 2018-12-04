@@ -219,8 +219,27 @@ public class BattleMenu extends Menus {
         }
         QueueProvider.offer(healthReduction + " damage dealt!");
         if (attacker instanceof Player) {
-        	 
+        	
         	int petDamage = (int)((Player) attacker).getPet().getDamage();
+        	ArrayList<Item> items = (ArrayList<Item>) player.getStorage().getItems();
+        	boolean found = false;
+        	int count;
+        	for(count = 0 ; count < items.size() ; count++) {
+        		if(items.get(count).getId().equals("xpetstone")) {
+        			found = true;
+        			break;
+        		}
+        	}
+        	//if player has pet stone
+        	if(found) {
+        		//if pet's accumulated absorb point is enough, pet vomits the accumulated absorb point as damage to the enemy
+        		if(player.getPet().getAccumulatedAbsorbPoint() == player.getLevel()*21) {
+        			petDamage = player.getPet().getAccumulatedAbsorbPoint();
+        			QueueProvider.offer("Pet inhales to vomit its accumulated absorb damage!!!!");
+        			player.removeItemFromStorage(items.get(count));
+        			player.getPet().resetAccumulatedAbsorbPoint();
+        		}
+        	}
             defender.setHealth(defender.getHealth() - petDamage);
             QueueProvider.offer(petDamage + " pet damage dealt!");
             if(((Player) attacker).getAuraOfValor()) {

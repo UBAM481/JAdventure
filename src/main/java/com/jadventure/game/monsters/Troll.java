@@ -17,6 +17,6 @@ public class Troll extends Monster {
         this.setDexterity(1);
         this.setXPGain(75 + playerLevel * 3);
         this.setGold(25 + playerLevel * 10);
-        addRandomItems(playerLevel, "wbrd1", "ashi1", "pmil2", "pmana");
+        addRandomItems(playerLevel, "wbrd1", "ashi1", "pmil2", "pmana", "xpetstone");
     }
 }

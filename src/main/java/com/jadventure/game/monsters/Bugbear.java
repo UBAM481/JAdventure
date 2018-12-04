@@ -19,7 +19,6 @@ public class Bugbear extends Monster {
         this.setCritChance(0.02);
         this.setXPGain(30 + playerLevel * 3);
         this.setGold(playerLevel * 3);
-        addRandomItems(playerLevel, "fram1", "pmil1");
-
+        addRandomItems(playerLevel, "fram1", "pmil1", "xpetstone");
     }
 }

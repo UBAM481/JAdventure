@@ -261,6 +261,19 @@
         "weight": "1"
       }
     },
+
+  "xpetstone": {
+      "type": "tool",
+      "name": "pet stone",
+      "description": "A mysterious stone that will make your pet vomit all the absorbed damage to the enemy, if absorbed damage is greater than a limit",
+      "position": "rightHand",
+      "level": 1,
+      "properties": {
+        "weight": "2",
+        "value": "22"
+      }
+    },
+
     "phli1": {
       "type": "potion",
       "name": "Potion of Health",
