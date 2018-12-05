@@ -190,7 +190,7 @@ public abstract class Entity {
     public Map<String, String> equipItem(EquipmentLocation place, Item item) {
         double oldDamage = this.damage;
         int oldArmour = this.armour;
-        if(!item.getId().equals("xpetstone")) {
+        if(item.getId().charAt(0) != 'x') {
 	        if (place == null) {
 	            place = item.getPosition();
 	        }
