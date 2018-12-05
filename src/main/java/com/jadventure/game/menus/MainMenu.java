@@ -1,8 +1,14 @@
 package com.jadventure.game.menus;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.net.Socket;
 
+import com.dropbox.core.DbxRequestConfig;
+import com.dropbox.core.v2.DbxClientV2;
+import com.dropbox.core.v2.files.ListFolderResult;
+import com.dropbox.core.v2.files.Metadata;
 import com.jadventure.game.DeathException;
 import com.jadventure.game.Game;
 import com.jadventure.game.GameModeType;
@@ -17,7 +23,7 @@ import com.jadventure.game.entities.Player;
  * start a new one, or exit to the terminal.
  */
 public class MainMenu extends Menus implements Runnable {
-     
+    private static final String ACCESS_TOKEN = "rzo2fCEbz3AAAAAAAAAACVdzUZ86JX7Ul1Cd2m9qHDCu3G6Q5GZBUwwU1WXdCIDn";
     public MainMenu(Socket server, GameModeType mode){
         QueueProvider.startMessenger(mode, server);
     }
@@ -68,9 +74,16 @@ public class MainMenu extends Menus implements Runnable {
                 boolean exit = false;
                 while (player == null) {
                     key = QueueProvider.take();
+                    String[] keys = key.split(" ") ;
+                    if( keys.length > 1 && keys[0].equals("cloud") && cloudContains( keys[1] )){
+                        if( downloadProfile( keys[1] ) )
+                            key = keys[1] ;
+
+                    }
                     if (Player.profileExists(key)) {
                         player = Player.load(key);
-                    } else if (key.equals("exit") || key.equals("back")) {
+                    }
+                    else if (key.equals("exit") || key.equals("back")) {
                         exit = true;
                         break;
                     } else {
@@ -86,7 +99,7 @@ public class MainMenu extends Menus implements Runnable {
                 listProfiles();
                 exit = false;
                 while (!exit) {
-                    key = QueueProvider.take();
+                    key = QueueProvider.take().trim() ;
                     if (Player.profileExists(key)) {
                         String profileName = key;
                         QueueProvider.offer("Are you sure you want to delete " + profileName + "? y/n");
@@ -111,7 +124,71 @@ public class MainMenu extends Menus implements Runnable {
         }
         return true;
     }
+    private static boolean downloadProfile( String key ){
+//        QueueProvider.offer("downloading file: " + "/" + key + ".json" + " to " + "json/profiles/" + key + "/" + key + "_profile.json");
+        DbxRequestConfig config = DbxRequestConfig.newBuilder("dropbox/java-tutorial").build();
+        DbxClientV2 client = new DbxClientV2(config, ACCESS_TOKEN);
+        if( Player.profileExists( key ) ){
+            QueueProvider.offer("This operation will override your local profile:" + key);
+            QueueProvider.offer("Would you like to continue?(y/n)");
+            String ans = QueueProvider.take().trim().toLowerCase() ;
+            if( ans.length() == 0 || ans.charAt(0) != 'y' ){
+                QueueProvider.offer("Loading canceled");
+                return false;
+            }
+        }else {
 
+            File parentFolder = new File("json/profiles/" + key ) ;
+            File file = new File("json/profiles/" + key + "/" + key + "_profile.json");
+            if( !parentFolder.exists() )
+                parentFolder.mkdirs() ;
+            if (!file.exists()) {
+                try {
+                    file.createNewFile();
+                } catch (Exception e) {
+                    QueueProvider.offer("Can not load your profile at the moment. Please try again later.");
+                    return false;
+                }
+            }
+        }
+
+        try {
+            OutputStream out = new FileOutputStream("json/profiles/" + key + "/" + key + "_profile.json");
+            client.files().downloadBuilder("/" + key + ".json").download( out );
+        }catch (Exception e){
+            QueueProvider.offer("Can not load your profile at the moment. Please try again later.");
+            return false ;
+//            QueueProvider.offer( e.getMessage() + " | " + e.getLocalizedMessage() );
+        }
+        QueueProvider.offer("Profile files downloaded successfully");
+        return true ;
+    }
+    public static boolean cloudContains( String key ){
+        DbxRequestConfig config = DbxRequestConfig.newBuilder("dropbox/java-tutorial").build();
+        DbxClientV2 client = new DbxClientV2(config, ACCESS_TOKEN);
+
+        try {
+            ListFolderResult result = client.files().listFolder("");
+            while (true) {
+                for (Metadata metadata : result.getEntries()) {
+                    if( key.equals( metadata.getPathLower().substring( 1 , metadata.getPathLower().length()-5 ) ) )
+                        return true ;
+                }
+
+                if (!result.getHasMore()) {
+                    break;
+                }
+
+                result = client.files().listFolderContinue(result.getCursor());
+            }
+        }catch ( Exception e ){
+            QueueProvider.offer("Can not reach your profile at the moment. Please try again later.");
+            return false;
+        }
+
+        return false ;
+
+    }
     private static boolean deleteDirectory(File directory) {
         if(directory.exists()){
             File[] files = directory.listFiles();
@@ -130,7 +207,9 @@ public class MainMenu extends Menus implements Runnable {
     }
 
     private static void listProfiles() {
-        QueueProvider.offer("Profiles:");
+        DbxRequestConfig config = DbxRequestConfig.newBuilder("dropbox/java-tutorial").build();
+        DbxClientV2 client = new DbxClientV2(config, ACCESS_TOKEN);
+        QueueProvider.offer("Local profiles:");
         try {
                 File file = new File("json/profiles");
                 String[] profiles = file.list();
@@ -141,6 +220,24 @@ public class MainMenu extends Menus implements Runnable {
                     QueueProvider.offer("  " + name);
                 }
                     i += 1;
+            }
+            QueueProvider.offer("Online profiles: (Please type cloud <profile name> to avoid ambiguity)");
+            try {
+                ListFolderResult result = client.files().listFolder("");
+                while (true) {
+                    for (Metadata metadata : result.getEntries()) {
+                        QueueProvider.offer( " " + metadata.getPathLower().substring( 1 , metadata.getPathLower().length()-5 ) );
+                    }
+
+                    if (!result.getHasMore()) {
+                        break;
+                    }
+
+                    result = client.files().listFolderContinue(result.getCursor());
+                }
+            }catch ( Exception e){
+                QueueProvider.offer("Your profile can not be uploaded at the moment. Please try again later.");
+                return ;
             }
             QueueProvider.offer("\nWhat is the name of the avatar you want to select? Type 'back' to go back");
         } catch (NullPointerException e) {

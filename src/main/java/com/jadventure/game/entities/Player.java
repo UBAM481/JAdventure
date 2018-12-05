@@ -1,12 +1,6 @@
 package com.jadventure.game.entities;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -20,6 +14,14 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
 
+import com.dropbox.core.DbxException;
+import com.dropbox.core.DbxRequestConfig;
+import com.dropbox.core.v2.DbxClientV2;
+
+import com.dropbox.core.v2.files.FileMetadata;
+import com.dropbox.core.v2.files.ListFolderResult;
+import com.dropbox.core.v2.files.Metadata;
+import com.dropbox.core.v2.users.FullAccount;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -36,6 +38,7 @@ import com.jadventure.game.items.Item;
 import com.jadventure.game.items.ItemStack;
 import com.jadventure.game.items.Storage;
 import com.jadventure.game.menus.BattleMenu;
+import com.jadventure.game.menus.MainMenu;
 import com.jadventure.game.monsters.Monster;
 import com.jadventure.game.navigation.Coordinate;
 import com.jadventure.game.navigation.ILocation;
@@ -63,7 +66,9 @@ public class Player extends Entity {
     private Game game;
 
     private Pet pet;
-    
+
+    private static final String ACCESS_TOKEN = "rzo2fCEbz3AAAAAAAAAACVdzUZ86JX7Ul1Cd2m9qHDCu3G6Q5GZBUwwU1WXdCIDn";
+
     public Player() {
     	pet = new Pet();
     }
@@ -369,6 +374,60 @@ public class Player extends Entity {
         } catch (IOException ex) {
             QueueProvider.offer("\nUnable to save to file '" + fileName + "'.");
         }
+
+        QueueProvider.offer("Now you can even save your profile to cloud and play anywhere you want!!!");
+        QueueProvider.offer("Would you like to save your profile to cloud?(y/n)");
+        String answer = QueueProvider.take().trim().toLowerCase() ;
+        if( answer.length() == 0 || answer.charAt(0) != 'y' ){
+            QueueProvider.offer("Did'nt expect that reaction but thats OK.");
+            return;
+        }
+
+        DbxRequestConfig config = DbxRequestConfig.newBuilder("dropbox/java-tutorial").build();
+        DbxClientV2 client = new DbxClientV2(config, ACCESS_TOKEN);
+
+        /*      TO DO
+                -This is not so smart because now any username can be uploaded once
+                password system is required.
+
+                -consider the test profile
+        */
+
+        boolean alreadyExist = false ;
+
+        try {
+            ListFolderResult result = client.files().listFolder("");
+            while (true) {
+                for (Metadata metadata : result.getEntries()) {
+                    if( metadata.getPathLower().equals( "/" + getName() + ".json") ){
+                        //QueueProvider.offer("This name is already taken!");
+                        alreadyExist = true ;
+                        break;
+                    }
+                }
+
+                if (alreadyExist || !result.getHasMore()) {
+                    break;
+                }
+
+                result = client.files().listFolderContinue(result.getCursor());
+            }
+        }catch ( Exception e){
+            QueueProvider.offer("Your profile can not be uploaded at the moment. Please try again later.");
+            return ;
+        }
+
+        try (InputStream in = new FileInputStream(fileName)) {
+            if(MainMenu.cloudContains( getName()) )
+                client.files().deleteV2("/" + getName() + ".json" ) ;
+
+            FileMetadata metadata = client.files().uploadBuilder( "/" + getName() + ".json" ).uploadAndFinish(in);
+        }catch( Exception e ){
+            QueueProvider.offer( e.getMessage() + " | " + e.getLocalizedMessage() );
+            QueueProvider.offer("Your profile can not be uploaded at the moment. Please try again later.");
+            return;
+        }
+        QueueProvider.offer("Successfully uploaded your profile. Now you can continue to play anywhere.");
     }
     public static int calculateDistance(String source, String target) {
         if (source == null || target == null) {
