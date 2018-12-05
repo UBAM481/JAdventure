@@ -124,7 +124,7 @@ public class Location implements ILocation {
     }
 
     public void remove(NPC npc) {
-        if (npc.getClass() == Monster.class) {
+        if ( npc instanceof Monster ) {
             removeMonster((Monster) npc);
         } else {
             removeNpc(npc);
