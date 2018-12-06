@@ -147,6 +147,7 @@ public class Player extends Entity {
             player.setDamage(json.get("damage").getAsInt());
             player.setLevel(json.get("level").getAsInt());
             player.setXP(json.get("xp").getAsInt());
+            if( json.has("gold") )  player.setGold(json.get("gold").getAsInt());
             player.setStrength(json.get("strength").getAsInt());
             player.setIntelligence(json.get("intelligence").getAsInt());
             player.setDexterity(json.get("dexterity").getAsInt());
@@ -236,6 +237,7 @@ public class Player extends Entity {
             player.setLevel(json.get("level").getAsInt());
             
             player.setXP(json.get("xp").getAsInt());
+            if(json.has("gold")) player.setGold(json.get("gold").getAsInt());
             player.setStrength(json.get("strength").getAsInt());
             player.setIntelligence(json.get("intelligence").getAsInt());
             player.setDexterity(json.get("dexterity").getAsInt());
@@ -334,6 +336,7 @@ public class Player extends Entity {
         jsonObject.addProperty("damage", getDamage());
         jsonObject.addProperty("level", getLevel());
         jsonObject.addProperty("xp", getXP());
+        jsonObject.addProperty("gold", getGold());
         jsonObject.addProperty("strength", getStrength());
         jsonObject.addProperty("intelligence", getIntelligence());
         jsonObject.addProperty("dexterity", getDexterity());
