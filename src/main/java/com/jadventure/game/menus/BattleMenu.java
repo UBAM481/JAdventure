@@ -256,7 +256,7 @@ public class BattleMenu extends Menus {
                 }
 
                 ((Player) attacker).setManaPool(((Player) attacker).getManaPool()-10);
-                if(((Player) attacker).getManaPool()==0)
+                if(((Player) attacker).getManaPool()<=0)
                     ((Player) attacker).setAuraOfValor(false);
             }
             if (defender.getHealth() < 0) {
