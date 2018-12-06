@@ -302,10 +302,10 @@ public class Player extends Entity {
               message += "\nPet Damage: " + player.getPet().getDamage();
 
               message += "\nCurrent mana: " + player.getManaPool();
-              if(auraOfValor)
+              /*if(auraOfValor)
                   message += "\nYou have Aura of Valor(+5 raw damage)";
               if(!auraOfValor)
-                  message += "\nYou do not have Aura of Valor.";
+                  message += "\nYou do not have Aura of Valor.";*/
         QueueProvider.offer(message);
     }
 
