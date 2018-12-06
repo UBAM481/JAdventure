@@ -38,3 +38,6 @@ nb-configuration.xml
 
 # Log files #
 *.log
+
+# Scoreboard Files #
+/json/scoreboard

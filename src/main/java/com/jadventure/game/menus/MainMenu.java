@@ -137,6 +137,8 @@ public class MainMenu extends Menus implements Runnable {
         DbxClientV2 client = new DbxClientV2(config, ACCESS_TOKEN);
         ArrayList<Player> scoreboard = new ArrayList<Player>() ;
         QueueProvider.offer("Getting best players around the world. Get ready to level the competition up!");
+        File scoreboardDirectory = new File("json/scoreboard");
+        if( !scoreboardDirectory.exists() ) scoreboardDirectory.mkdirs() ;
         try {
             ListFolderResult result = client.files().listFolder("");
             while (true) {
