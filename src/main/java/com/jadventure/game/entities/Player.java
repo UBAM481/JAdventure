@@ -116,16 +116,27 @@ public class Player extends Entity {
     protected static String getProfileFileName(String name) {
         return "json/profiles/" + name + "/" + name + "_profile.json";
     }
+    protected static String getCloudFileName(String name) {
+        return "json/scoreboard/" + name + ".json";
+    }
 
     public static boolean profileExists(String name) {
         File file = new File(getProfileFileName(name));
         return file.exists();
     }
 
-    public static Player load(String name) {
+    public static Player load( String name ){
+        return load( name , false ) ;
+    }
+    public static Player load(String name , boolean isScoreboard) {
         player = new Player();
         JsonParser parser = new JsonParser();
-        String fileName = getProfileFileName(name);
+        String fileName ;
+        if( isScoreboard ){
+            fileName = getCloudFileName( name ) ;
+        }else{
+            fileName = getProfileFileName(name);
+        }
         try {
             Reader reader = new FileReader(fileName);
             JsonObject json = parser.parse(reader).getAsJsonObject();

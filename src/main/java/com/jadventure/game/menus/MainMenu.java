@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 
 import com.dropbox.core.DbxRequestConfig;
 import com.dropbox.core.v2.DbxClientV2;
@@ -40,6 +43,7 @@ public class MainMenu extends Menus implements Runnable {
         this.menuItems.add(new MenuItem("Start", "Starts a new Game", "new"));
         this.menuItems.add(new MenuItem("Load", "Loads an existing Game"));
         this.menuItems.add(new MenuItem("Delete", "Deletes an existing Game"));
+        this.menuItems.add(new MenuItem("Scoreboard", "See the best players around the world"));
         this.menuItems.add(new MenuItem("Exit", null, "quit"));
         
         while(true) {
@@ -65,6 +69,9 @@ public class MainMenu extends Menus implements Runnable {
             case "start":
                 new ChooseClassMenu();
                 break;
+            case "scoreboard":
+                displayScoreboard();
+                return true ;
             case "exit":
                 QueueProvider.offer("Goodbye!");
                 return false;
@@ -124,6 +131,83 @@ public class MainMenu extends Menus implements Runnable {
         }
         return true;
     }
+
+    private static void displayScoreboard() {
+        DbxRequestConfig config = DbxRequestConfig.newBuilder("dropbox/java-tutorial").build();
+        DbxClientV2 client = new DbxClientV2(config, ACCESS_TOKEN);
+        ArrayList<Player> scoreboard = new ArrayList<Player>() ;
+        QueueProvider.offer("Getting best players around the world. Get ready to level the competition up!");
+        try {
+            ListFolderResult result = client.files().listFolder("");
+            while (true) {
+                for (Metadata metadata : result.getEntries()) {
+                    String username =  metadata.getPathLower().substring( 1 , metadata.getPathLower().length()-5 ) ;
+                    downloadProfile( username, "json/scoreboard/" + username + ".json");
+
+                    scoreboard.add( Player.load( username , true ) );
+                }
+
+                if (!result.getHasMore()) {
+                    break;
+                }
+
+                result = client.files().listFolderContinue(result.getCursor());
+            }
+        }catch ( Exception e ){
+            QueueProvider.offer("Can not display scoreboard at the moment. Please try again later.");
+            return;
+        }
+
+        Player[] scoreboardArr = new Player[scoreboard.size()] ;
+        for( int i=0 ; i<scoreboard.size() ; i++ ) scoreboardArr[i] = scoreboard.get(i) ;
+
+        Arrays.sort(scoreboardArr, new Comparator<Player>() {
+            @Override
+            public int compare(Player player, Player t1) {
+                return t1.getXP() - player.getXP() ;
+            }
+        });
+
+        QueueProvider.offer("\n==========  TOP 10 PLAYERS AROUND THE WORLD ==========");
+        QueueProvider.offer("Rank   Name             Character Type     XP     Gold");
+        for( int i=0 ; i<scoreboardArr.length && i < 10 ; i++ ){
+            Player player = scoreboardArr[i] ;
+            String line = "  " + (i+1) + ".   " + player.getName() ;
+            for( int j=0 ; j < 17-player.getName().length(); j++ ) line += " " ;
+            line += player.getCurrentCharacterType() ;
+            for( int j=0 ; j < 19 - player.getCurrentCharacterType().length(); j++ ) line += " " ;
+            line += player.getXP() ;
+            for( int j=0 ; j < 7 - (""+player.getXP()).length(); j++ ) line += " " ;
+            line += player.getGold() ;
+            QueueProvider.offer( line ) ;
+        }
+        QueueProvider.offer("");
+        return;
+    }
+
+    private static void downloadProfile( String key , String filePath ){
+        DbxRequestConfig config = DbxRequestConfig.newBuilder("dropbox/java-tutorial").build();
+        DbxClientV2 client = new DbxClientV2(config, ACCESS_TOKEN);
+
+        File file = new File( filePath );
+
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (Exception e) {
+                return;
+            }
+        }
+        try {
+            OutputStream out = new FileOutputStream( filePath );
+            client.files().downloadBuilder("/" + key + ".json").download( out );
+        }catch (Exception e){
+            return;
+        }
+        return;
+    }
+
+
     private static boolean downloadProfile( String key ){
 //        QueueProvider.offer("downloading file: " + "/" + key + ".json" + " to " + "json/profiles/" + key + "/" + key + "_profile.json");
         DbxRequestConfig config = DbxRequestConfig.newBuilder("dropbox/java-tutorial").build();
