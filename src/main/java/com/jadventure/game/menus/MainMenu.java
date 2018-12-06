@@ -144,6 +144,7 @@ public class MainMenu extends Menus implements Runnable {
             while (true) {
                 for (Metadata metadata : result.getEntries()) {
                     String username =  metadata.getPathLower().substring( 1 , metadata.getPathLower().length()-5 ) ;
+                    if( username.equals("test") ) continue ;
                     downloadProfile( username, "json/scoreboard/" + username + ".json");
 
                     scoreboard.add( Player.load( username , true ) );
