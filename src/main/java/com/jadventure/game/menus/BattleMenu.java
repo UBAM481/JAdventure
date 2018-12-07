@@ -10,10 +10,17 @@ import com.jadventure.game.CharacterChange;
 import com.jadventure.game.items.ItemStack;
 import com.jadventure.game.items.Item;
 import com.jadventure.game.GameBeans;
+import com.jadventure.game.monsters.MonsterFactory;
+import com.jadventure.game.navigation.ILocation;
+import com.jadventure.game.prompts.CommandCollection;
+import com.jadventure.game.repository.ItemRepository;
+import com.jadventure.game.repository.LocationRepository;
 
+import java.awt.*;
 import java.util.Random;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Set;
 
 public class BattleMenu extends Menus {
 
@@ -37,6 +44,8 @@ public class BattleMenu extends Menus {
             QueueProvider.offer("\nWhat is your choice?");
             MenuItem selectedItem = displayMenu(this.menuItems);
             testSelected(selectedItem);
+            if(selectedItem.command.equals("Random Teleport"))
+                break;
         }
         if (player.getHealth() == 0) {
             QueueProvider.offer("You died... Start again? (y/n)");
@@ -148,12 +157,99 @@ public class BattleMenu extends Menus {
             }
             case "random teleport":{
                 QueueProvider.offer("You are teleporting");
+                randomteleportduringfight((Monster) opponent);
                 break;
             }
             default: {
                   break;
             }
         }
+    }
+
+    private void randomteleportduringfight(Monster opponent) {
+        LocationRepository locationRepo = GameBeans.getLocationRepository(player.getName());
+        ILocation location = player.getLocation();
+        location.removeMonster(opponent);
+        ILocation newLocation = getRandomLocationDuringFight(location,opponent.getRandomTeleportPreventPoint());
+        player.setLocation(newLocation);
+        if ("test".equals(player.getName())) {
+            QueueProvider.offer(player.getLocation().getCoordinate().toString());
+        }
+
+        player.getLocation().print();
+        addMonsterAndItemDuringFight();
+
+    }
+
+    private void addMonsterAndItemDuringFight() {
+        Random random = new Random();
+        if (player.getLocation().getMonsters().size() == 0) {
+            MonsterFactory monsterFactory = new MonsterFactory();
+            int upperBound = random.nextInt(player.getLocation().getDangerRating() + 1);
+            for (int i = 0; i < upperBound; i++) {
+                Monster monster = monsterFactory.generateMonster(player);
+                player.getLocation().addMonster(monster);
+            }
+        }
+        if (player.getLocation().getItems().size() == 0) {
+            int chance = random.nextInt(100);
+            if (chance < 60) {
+                addItemToLocationDuringFight();
+            }
+        }
+        if (random.nextDouble() < 0.5) {
+            List<Monster> monsters = player.getLocation().getMonsters();
+            if (monsters.size() > 0) {
+                int posMonster = random.nextInt(monsters.size());
+                String monster = monsters.get(posMonster).monsterType;
+                QueueProvider.offer("A " + monster + " is attacking you!");
+                try {
+                    player.attack(monster);
+                } catch (DeathException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+    }
+
+    private void addItemToLocationDuringFight() {
+        ItemRepository itemRepo = GameBeans.getItemRepository();
+        if (player.getHealth() < player.getHealthMax()/3) {
+            player.getLocation().addItem(itemRepo.getRandomFood(player.getLevel()));
+        } else {
+            Random rand = new Random();
+            int startIndex = rand.nextInt(3);
+            switch (startIndex) {
+                case 0:
+                    player.getLocation().addItem(itemRepo.getRandomWeapon(player.getLevel()));
+                    break;
+                case 1:
+                    player.getLocation().addItem(itemRepo.getRandomFood(player.getLevel()));
+                    break;
+                case 2:
+                    player.getLocation().addItem(itemRepo.getRandomArmour(player.getLevel()));
+                    break;
+                case 3:
+                    player.getLocation().addItem(itemRepo.getRandomPotion(player.getLevel()));
+                    break;
+            }
+        }
+
+    }
+
+    private ILocation getRandomLocationDuringFight(ILocation location, int randomteleportpreventpoint) {
+        Set<ILocation> exits = location.getExitsForTeleport(player.getStorage().getNumberOfItems(),randomteleportpreventpoint);
+        int size = exits.size();
+        int item = new Random().nextInt(size); // In real life, the Random object should be rather more shared than this
+        int i = 0;
+        for(ILocation obj : exits) {
+            if (i == item)
+                return obj;
+            i++;
+        }
+        return null;
+
     }
 
     private int escapeAttempt(Player player, NPC attacker,

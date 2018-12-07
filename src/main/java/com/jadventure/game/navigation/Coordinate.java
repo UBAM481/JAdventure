@@ -77,4 +77,28 @@ public class Coordinate {
     public String toString() {
         return x + "," + y + "," + z;
     }
+
+    public boolean controlDistance(Coordinate coord,int numberofitems,int monsterskill) {
+        boolean boolxposition=controlX(coord.x,numberofitems,monsterskill);
+        boolean boolyposition=controly(coord.y,numberofitems,monsterskill);
+        boolean boolzposition=controlz(coord.z,numberofitems,monsterskill);
+        return boolxposition&&boolyposition&&boolzposition;
+    }
+
+    private boolean controlz(int z, int numberofitems, int monsterskill) {
+        int c=7-numberofitems-monsterskill;
+        return this.z<=z+c||this.z>=z-c;
+
+    }
+
+    private boolean controly(int y, int numberofitems, int monsterskill) {
+        int c=7-numberofitems-monsterskill;
+        return this.y<=y+c||this.y>=y-c;
+
+    }
+
+    private boolean controlX(int x, int numberofitems, int monsterskill) {
+        int c=7-numberofitems-monsterskill;
+        return this.x<=x+c||this.x>=x-c;
+    }
 }

@@ -2,6 +2,7 @@ package com.jadventure.game.navigation;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.jadventure.game.entities.NPC;
 import com.jadventure.game.items.Item;
@@ -37,8 +38,9 @@ public interface ILocation {
 
     int getDangerRating();
     void setDangerRating(int dangerRating);
-
     Map<Direction, ILocation> getExits();
     void print();
+
+    Set<ILocation> getExitsForTeleport(int numberOfItems,int teleportpreventpoint);
 }
 

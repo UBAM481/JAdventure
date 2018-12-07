@@ -1,10 +1,7 @@
 package com.jadventure.game.prompts;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -139,30 +136,7 @@ public enum CommandCollection {
                         QueueProvider.offer(player.getLocation().getCoordinate().toString());
                     }
                     player.getLocation().print();
-                    Random random = new Random();
-                    if (player.getLocation().getMonsters().size() == 0) {
-                        MonsterFactory monsterFactory = new MonsterFactory();
-                        int upperBound = random.nextInt(player.getLocation().getDangerRating() + 1);
-                        for (int i = 0; i < upperBound; i++) {
-                            Monster monster = monsterFactory.generateMonster(player);
-                            player.getLocation().addMonster(monster);
-                        }
-                    }
-                    if (player.getLocation().getItems().size() == 0) {
-                        int chance = random.nextInt(100);
-                        if (chance < 60) {
-                            addItemToLocation();
-                        }
-                    }
-                    if (random.nextDouble() < 0.5) {
-                        List<Monster> monsters = player.getLocation().getMonsters();
-                        if (monsters.size() > 0) {
-                            int posMonster = random.nextInt(monsters.size());
-                            String monster = monsters.get(posMonster).monsterType;
-                            QueueProvider.offer("A " + monster + " is attacking you!");
-                            player.attack(monster);
-                        }
-                    }
+                    addMonsterAndItem();
                 } else {
                     QueueProvider.offer("You cannot walk through walls.");
                 }
@@ -173,6 +147,33 @@ public enum CommandCollection {
             QueueProvider.offer("That direction doesn't exist");
         } catch (NullPointerException ex) {
             QueueProvider.offer("That direction doesn't exist");
+        }
+    }
+
+    private void addMonsterAndItem() throws DeathException {
+        Random random = new Random();
+        if (player.getLocation().getMonsters().size() == 0) {
+            MonsterFactory monsterFactory = new MonsterFactory();
+            int upperBound = random.nextInt(player.getLocation().getDangerRating() + 1);
+            for (int i = 0; i < upperBound; i++) {
+                Monster monster = monsterFactory.generateMonster(player);
+                player.getLocation().addMonster(monster);
+            }
+        }
+        if (player.getLocation().getItems().size() == 0) {
+            int chance = random.nextInt(100);
+            if (chance < 60) {
+                addItemToLocation();
+            }
+        }
+        if (random.nextDouble() < 0.5) {
+            List<Monster> monsters = player.getLocation().getMonsters();
+            if (monsters.size() > 0) {
+                int posMonster = random.nextInt(monsters.size());
+                String monster = monsters.get(posMonster).monsterType;
+                QueueProvider.offer("A " + monster + " is attacking you!");
+                player.attack(monster);
+            }
         }
     }
 
@@ -321,8 +322,34 @@ public enum CommandCollection {
 
     @Command(command="?-*randomteleport?-*", aliases="?-*rt?-*",description ="Teleport a random location according to some parameters",debug = false)
         public void comment_randomteleport(String arg) throws DeathException{
-        QueueProvider.offer("You are teleporting " + arg);
+
+        QueueProvider.offer("You are teleporting\n " + arg);
+        LocationRepository locationRepo = GameBeans.getLocationRepository(player.getName());
+        ILocation location = player.getLocation();
+        ILocation newLocation = getRandomLocation(location);
+        ILocation oldLocation = player.getLocation();
+        player.setLocation(newLocation);
+        if ("test".equals(player.getName())) {
+            QueueProvider.offer(player.getLocation().getCoordinate().toString());
         }
+
+        player.getLocation().print();
+        addMonsterAndItem();
+        }
+
+    private ILocation getRandomLocation(ILocation location) {
+        Set<ILocation> exits = location.getExitsForTeleport(player.getStorage().getNumberOfItems(),0);
+        int size = exits.size();
+        int item = new Random().nextInt(size); // In real life, the Random object should be rather more shared than this
+        int i = 0;
+        for(ILocation obj : exits) {
+            if (i == item)
+                return obj;
+            i++;
+        }
+        return null;
+    }
+
 
 
     private void addItemToLocation() {

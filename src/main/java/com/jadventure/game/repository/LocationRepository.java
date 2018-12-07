@@ -43,6 +43,10 @@ public class LocationRepository {
     private Map<Coordinate, ILocation> locations;
     private static LocationRepository instance;
 
+    public Map<Coordinate,ILocation> getLocations(){
+        return locations;
+    }
+
     public LocationRepository(String profileName) {
         locations = new HashMap<Coordinate, ILocation>();
         fileName = "json/profiles/" + profileName + "/locations.json";

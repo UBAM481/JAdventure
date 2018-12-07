@@ -1,10 +1,6 @@
 package com.jadventure.game.navigation;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.jadventure.game.GameBeans;
 import com.jadventure.game.QueueProvider;
@@ -191,5 +187,21 @@ public class Location implements ILocation {
 		QueueProvider.offer(direction.getKey().getDescription() + ": ");
     		QueueProvider.offer("    " + direction.getValue().getDescription());
         }
+    }
+
+    @Override
+    public Set<ILocation> getExitsForTeleport(int numberOfItems,int teleportpreventpoint) {
+        Set<ILocation> exits = new HashSet<>();
+        ILocation borderingLocation;
+        LocationRepository locationRepo = GameBeans.getLocationRepository();
+        Map<Coordinate, ILocation> locations = locationRepo.getLocations();
+        for (Coordinate coord:locations.keySet()) {
+            boolean canTeleport=this.coordinate.controlDistance(coord,numberOfItems,teleportpreventpoint);
+            ILocation exitLocation = locations.get(coord);
+            if(canTeleport&&!exitLocation.getLocationType().name().equals("WALL")){
+                exits.add(exitLocation);
+            }
+        }
+        return exits;
     }
 }
