@@ -211,4 +211,14 @@ public class Location implements ILocation {
         }
         return exits;
     }
+    public static void checkdistance(double distance) {
+        if(distance>5)
+            QueueProvider.offer("Wow!You jumped "+distance+" meter \n");
+        else if(distance==0){
+            QueueProvider.offer("Opps!What an unlucky day.You are still in the same place ");
+        }
+        else
+            QueueProvider.offer("You teleported  " + (int)distance+" meter \n");
+    }
+
 }

@@ -177,10 +177,7 @@ public class BattleMenu extends Menus {
             QueueProvider.offer(player.getLocation().getCoordinate().toString());
         }
         double distance=Location.calculateDistanceBetweenTwoLocation(location,newLocation);
-        if(distance>5)
-            QueueProvider.offer("Wow!You jumped "+distance+" meter \n");
-        else
-            QueueProvider.offer("You teleported  " + (int)distance+" meter \n");
+        Location.checkdistance(distance);
 
 
         player.getLocation().print();

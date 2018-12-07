@@ -19,6 +19,7 @@ import com.jadventure.game.repository.LocationRepository;
 import com.jadventure.game.DeathException;
 import com.jadventure.game.GameBeans;
 
+
 /**
  * CommandCollection contains the declaration of the methods mapped to game commands
  *
@@ -325,10 +326,7 @@ public enum CommandCollection {
         ILocation location = player.getLocation();
         ILocation newLocation = getRandomLocation(location);
         double distance=Location.calculateDistanceBetweenTwoLocation(location,newLocation);
-        if(distance>5)
-            QueueProvider.offer("Wow!You jumped "+distance+" meter \n");
-        else
-        QueueProvider.offer("You teleported  " + (int)distance+" meter \n");
+        Location.checkdistance(distance);
         player.setLocation(newLocation);
         if ("test".equals(player.getName())) {
             QueueProvider.offer(player.getLocation().getCoordinate().toString());
@@ -337,6 +335,7 @@ public enum CommandCollection {
         player.getLocation().print();
         addMonsterAndItem();
         }
+
 
     private ILocation getRandomLocation(ILocation location) {
         Set<ILocation> exits = location.getExitsForTeleport(player.getStorage().getNumberOfItems(),0);
