@@ -41,6 +41,13 @@ public class Location implements ILocation {
         this.locationType = locationType;
     }
 
+    public static double calculateDistanceBetweenTwoLocation(ILocation location, ILocation newLocation) {
+        double valuex=Math.pow(location.getCoordinate().x-newLocation.getCoordinate().x,2);
+        double valuey=Math.pow(location.getCoordinate().y-newLocation.getCoordinate().y,2);
+        double valuez=Math.pow(location.getCoordinate().z-newLocation.getCoordinate().z,2);
+        return Math.sqrt(valuex+valuey+valuez);
+    }
+
     public Coordinate getCoordinate() {
         return coordinate;
     }

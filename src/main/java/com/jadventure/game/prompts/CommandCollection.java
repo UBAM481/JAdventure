@@ -3,6 +3,7 @@ package com.jadventure.game.prompts;
 import java.lang.reflect.Method;
 import java.util.*;
 
+import com.jadventure.game.navigation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,10 +14,6 @@ import com.jadventure.game.entities.Player;
 import com.jadventure.game.entities.NPC;
 import com.jadventure.game.monsters.Monster;
 import com.jadventure.game.monsters.MonsterFactory;
-import com.jadventure.game.navigation.Coordinate;
-import com.jadventure.game.navigation.Direction;
-import com.jadventure.game.navigation.ILocation;
-import com.jadventure.game.navigation.LocationType;
 import com.jadventure.game.repository.ItemRepository;
 import com.jadventure.game.repository.LocationRepository;
 import com.jadventure.game.DeathException;
@@ -327,7 +324,11 @@ public enum CommandCollection {
         LocationRepository locationRepo = GameBeans.getLocationRepository(player.getName());
         ILocation location = player.getLocation();
         ILocation newLocation = getRandomLocation(location);
-        ILocation oldLocation = player.getLocation();
+        double distance=Location.calculateDistanceBetweenTwoLocation(location,newLocation);
+        if(distance>5)
+            QueueProvider.offer("Wow!You jumped "+distance+" meter \n");
+        else
+        QueueProvider.offer("You teleported  " + (int)distance+" meter \n");
         player.setLocation(newLocation);
         if ("test".equals(player.getName())) {
             QueueProvider.offer(player.getLocation().getCoordinate().toString());

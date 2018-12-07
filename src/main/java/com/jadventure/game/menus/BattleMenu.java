@@ -12,6 +12,7 @@ import com.jadventure.game.items.Item;
 import com.jadventure.game.GameBeans;
 import com.jadventure.game.monsters.MonsterFactory;
 import com.jadventure.game.navigation.ILocation;
+import com.jadventure.game.navigation.Location;
 import com.jadventure.game.prompts.CommandCollection;
 import com.jadventure.game.repository.ItemRepository;
 import com.jadventure.game.repository.LocationRepository;
@@ -175,6 +176,12 @@ public class BattleMenu extends Menus {
         if ("test".equals(player.getName())) {
             QueueProvider.offer(player.getLocation().getCoordinate().toString());
         }
+        double distance=Location.calculateDistanceBetweenTwoLocation(location,newLocation);
+        if(distance>5)
+            QueueProvider.offer("Wow!You jumped "+distance+" meter \n");
+        else
+            QueueProvider.offer("You teleported  " + (int)distance+" meter \n");
+
 
         player.getLocation().print();
         addMonsterAndItemDuringFight();
